@@ -1,7 +1,8 @@
 import { cpNewMod, getModuleNumber, rdDir, showMenu, removeSolved } from "./modules/index.js"
 
 
-(async () => {
+async function main() {
+	
 	const menuChoice = await showMenu();
 	let options
 	let modNum
@@ -10,6 +11,7 @@ import { cpNewMod, getModuleNumber, rdDir, showMenu, removeSolved } from "./modu
 			options = await rdDir();
 			modNum = await getModuleNumber(options);
 			await cpNewMod(modNum);
+			main();
 			break;
 		case "Copy solutions to Module":
 			break;
@@ -20,9 +22,11 @@ import { cpNewMod, getModuleNumber, rdDir, showMenu, removeSolved } from "./modu
 			modNum = await getModuleNumber(options);
 			const answer = await rdDir(modNum);
 			await removeSolved(answer, modNum);
-			
+			main();
 			break;
 		case "Exit":
 			break;
 	}
-})()
+};
+
+main();
