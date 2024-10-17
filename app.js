@@ -1,4 +1,4 @@
-import { cpNewMod, getModuleNumber, rdDir, showMenu, rmSolved } from "./modules/index.js"
+import { cpNewMod, getModuleNumber, rdDir, showMenu, removeSolved } from "./modules/index.js"
 
 
 (async () => {
@@ -19,7 +19,7 @@ import { cpNewMod, getModuleNumber, rdDir, showMenu, rmSolved } from "./modules/
 			options = await rdDir();
 			modNum = await getModuleNumber(options);
 			const answer = await rdDir(modNum);
-			await rmSolved(answer, modNum);
+			await removeSolved(answer, modNum);
 			
 			break;
 		case "Exit":
