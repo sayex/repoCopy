@@ -19,15 +19,18 @@ async function main() {
 			break;
 
 		case 'Copy Solutions to Module': {
-			// TODO: complete this
 			const moduleOptions = await getModuleOptions();
 			const { modNum } = await getModuleNumber(moduleOptions);
 			await cpSolved({ modNum });
+			await main();
 			break;
 		}
 
 		case 'Setup New Repo':
 			// TODO: complete this
+			console.log('Not yet implemented');
+			await main();
+
 			break;
 
 		case 'Remove Solved':
