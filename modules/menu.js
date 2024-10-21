@@ -4,9 +4,10 @@ const {prompt} = inquirer;
 
 export const showMenu = async () => {
 	const menuOptions = [
-		"Copy new Module",
-		"Copy solutions to Module",
-		"Setup new Repo",
+		"New Week Full Automation",
+		"Copy New Module",
+		"Copy Solutions to Module",
+		"Setup New Repo",
 		"Remove Solved",
 		"Exit",
 	];

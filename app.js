@@ -1,32 +1,92 @@
-import { cpNewMod, getModuleNumber, rdDir, showMenu, removeSolved } from "./modules/index.js"
-
+import { cpNewMod, getModuleNumber, rdDir, showMenu, removeSolved, cpSolved } from './modules/index.js';
+import { exec } from 'child_process';
+import util from 'util';
+const execPromise = util.promisify(exec);
 
 async function main() {
-	const menuChoice = await showMenu();
+	const choice = await showMenu();
 
-	switch (menuChoice) {
-		case "Copy new Module": {
-			const moduleOptions = await rdDir();
+	switch (choice) {
+		case 'Copy New Module':
+			await pullLatestMainRepo();
+			const moduleOptions = await getModuleOptions();
 			const { modNum } = await getModuleNumber(moduleOptions);
-			await cpNewMod({ modNum });
-			main();
+			console.log('Copying new module...');
+			await copyNewModule({ modNum });
+			console.log('Done!');
+
+			await main();
+			break;
+
+		case 'Copy Solutions to Module': {
+			// TODO: complete this
+			const moduleOptions = await getModuleOptions();
+			const { modNum } = await getModuleNumber(moduleOptions);
+			await cpSolved({ modNum });
 			break;
 		}
-		case "Copy solutions to Module":
+
+		case 'Setup New Repo':
+			// TODO: complete this
 			break;
-		case "Setup new Repo":
+
+		case 'Remove Solved':
+			await removeSolvedActivities();
+			await main();
 			break;
-		case "Remove Solved": {
-			const moduleOptions = await rdDir();
-			const { modNum } = await getModuleNumber(moduleOptions);
-			const activityOptions = await rdDir({ modNum });
-			await removeSolved(activityOptions, { modNum });
-			main();
+
+		case 'New Week Full Automation':
+			await performFullAutomation();
+			console.log('Done!');
+
+			await main();
 			break;
-		}
-		case "Exit":
+
+		case 'Exit':
 			break;
 	}
-};
+}
+
+async function pullLatestMainRepo() {
+	console.log('Pulling latest code from main repo...');
+	await execPromise(`git pull`, { cwd: process.env.MAIN_REPO });
+	return;
+}
+
+async function getModuleOptions() {
+	return await rdDir();
+}
+
+async function copyNewModule({ modNum }) {
+	await cpNewMod({ modNum });
+}
+
+async function removeSolvedActivities(modNum) {
+	const moduleOptions = await getModuleOptions();
+	if (!modNum) {
+		var { modNum } = await getModuleNumber(moduleOptions);
+	}
+	const activityOptions = await rdDir({ modNum });
+	console.log("Removing 'Solved' and 'Main' directories...");
+
+	await removeSolved(activityOptions, { modNum });
+}
+
+async function performFullAutomation() {
+	try {
+		await pullLatestMainRepo();
+		const moduleOptions = await getModuleOptions();
+		const { modNum } = await getModuleNumber(moduleOptions);
+		console.log('Copying new module...');
+		await copyNewModule({ modNum });
+		await removeSolvedActivities(modNum);
+		console.log('Pushing changes to main repo...');
+		await execPromise(`git add .`, { cwd: process.env.STUDENT_REPO });
+		await execPromise(`git commit -m "Updated for week"`, { cwd: process.env.STUDENT_REPO });
+		await execPromise(`git push`, { cwd: process.env.STUDENT_REPO });
+	} catch (error) {
+		throw error;
+	}
+}
 
 main();
