@@ -46,7 +46,17 @@ async function main() {
 			break;
 
 		case 'Exit':
-			break;
+			process.exit();
+		case 'Commit':
+			try {
+				await execPromise(`git add .`, { cwd: process.env.STUDENT_REPO });
+				await execPromise(`git commit -m "Updated"`, { cwd: process.env.STUDENT_REPO });
+				await execPromise(`git push`, { cwd: process.env.STUDENT_REPO });
+				await main();
+			} catch (error) {
+				console.log(error);
+				await main();
+			}
 	}
 }
 
@@ -84,9 +94,7 @@ async function performFullAutomation() {
 		await copyNewModule({ modNum });
 		await removeSolvedActivities(modNum);
 		console.log('Pushing changes to main repo...');
-		await execPromise(`git add .`, { cwd: process.env.STUDENT_REPO });
-		await execPromise(`git commit -m "Updated for week"`, { cwd: process.env.STUDENT_REPO });
-		await execPromise(`git push`, { cwd: process.env.STUDENT_REPO });
+		d;
 	} catch (error) {
 		throw error;
 	}
