@@ -94,7 +94,6 @@ async function performFullAutomation() {
 		await copyNewModule({ modNum });
 		await removeSolvedActivities(modNum);
 		console.log('Pushing changes to main repo...');
-		d;
 	} catch (error) {
 		throw error;
 	}
